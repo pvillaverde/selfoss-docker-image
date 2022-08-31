@@ -1,6 +1,6 @@
 
 #!/bin/bash
 while true; do
-	php -f /selfoss/cliupdate.php
+	php -f /var/www/html/cliupdate.php
 	sleep $CRON_PERIOD
 done
