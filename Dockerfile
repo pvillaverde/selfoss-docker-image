@@ -20,17 +20,9 @@ ARG SHA256_HASH="0b3d46b0b25170f99e3e29c9fc6a2e5235b0449fecbdad902583c919724aa6e
 ENV CRON_PERIOD=15m
 
 # Install Selfoss
-
-RUN if [ "${CHANNEL}" != "STABLE" ]; \
-	then wget -q https://dl.cloudsmith.io/public/fossar/selfoss-git/raw/names/selfoss.zip/versions/$VERSION/selfoss-$VERSION.zip -P /tmp; \
-	else wget -q https://github.com/SSilence/selfoss/releases/download/$VERSION/selfoss-$VERSION.zip -P /tmp; \
-	fi \
-	&& CHECKSUM=$(sha256sum /tmp/selfoss-$VERSION.zip | awk '{print $1}') \
-	&& if [ "${CHECKSUM}" != "${SHA256_HASH}" ]; then echo "Warning! Checksum does not match!" && exit 1; fi \
-	&& unzip -q /tmp/selfoss-$VERSION.zip -d /var/www/html && chown -R www-data:www-data /var/www/html/ \
-	&& if [ "${CHANNEL}" != "STABLE" ]; then mv {/var/www/html/selfoss/*,/var/www/html/selfoss/.*} /var/www/html/ && rmdir /var/www/html/selfoss; fi \
-	&& sed -i -e 's/base_url=/base_url=\//g' /var/www/html/defaults.ini \
-	&& rm -rf /tmp/*
+COPY setup.sh /setup.sh
+RUN /setup.sh
+RUN rm /setup.sh
 
 COPY rootfs /
 RUN chmod +x /root/*
