@@ -10,6 +10,8 @@ else
 	cp /var/www/html/defaults.ini /var/www/html/data/config.ini
 	cp /var/www/html/defaults.ini /var/www/html/config.ini
 fi
-
+# Reset permissions
+chown -R www-data:www-data /var/www/html
+# Launch cron & web
 bash /root/cron.sh &
 apache2-foreground
