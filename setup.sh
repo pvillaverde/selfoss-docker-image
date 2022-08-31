@@ -1,4 +1,5 @@
 
+#!/bin/bash
 # Download Stable or development version
 if [ "${CHANNEL}" != "STABLE" ]
 then 
@@ -21,8 +22,8 @@ chown -R www-data:www-data /var/www/html/
 # Development version has a selfoss folder, we move all its files to the parent directory.
 if [ "${CHANNEL}" != "STABLE" ]
 then
-	mv /var/www/html/selfoss/{*,.*} /var/www/html/
+	mv /var/www/html/selfoss/{*,.htaccess} /var/www/html/
 	rmdir /var/www/html/selfoss
 fi
-sed -i -e 's/base_url=/base_url=\//g' /var/www/html/defaults.ini \
+sed -i -e 's/base_url=/base_url=\//g' /var/www/html/defaults.ini
 rm -rf /tmp/*

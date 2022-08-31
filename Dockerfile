@@ -21,7 +21,7 @@ ENV CRON_PERIOD=15m
 
 # Install Selfoss
 COPY setup.sh /setup.sh
-RUN /setup.sh
+RUN chmod +x /setup.sh && /setup.sh
 RUN rm /setup.sh
 
 COPY rootfs /
