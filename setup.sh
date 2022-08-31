@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # Download Stable or development version
 if [ "${CHANNEL}" != "STABLE" ]
