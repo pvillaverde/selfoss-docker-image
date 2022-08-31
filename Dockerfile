@@ -1,6 +1,13 @@
 FROM php:7.4-apache
 LABEL MAINTAINER="Pablo Villaverde <https://github.com/pvillaverde>"
 
+# Install system dependencies
+RUN apt-get update -y && apt-get install -y curl unzip wget libzip-dev libpng-dev libicu-dev libcurl4-openssl-dev
+# Install PHP Required Extensions
+RUN docker-php-ext-install gd curl intl zip
+# Enable Apache Required Modules
+RUN a2enmod rewrite authz_core headers
+
 # DEFAULT ARGS
 ARG CHANNEL="STABLE"
 ARG VERSION="2.18"
@@ -12,13 +19,6 @@ ARG SHA256_HASH="0b3d46b0b25170f99e3e29c9fc6a2e5235b0449fecbdad902583c919724aa6e
 
 ENV CRON_PERIOD=15m
 
-# Install system dependencies
-RUN apt-get update -y && apt-get install -y curl unzip wget libzip-dev libpng-dev libicu-dev libcurl4-openssl-dev
-# Install PHP Required Extensions
-RUN docker-php-ext-install gd curl intl zip
-# Enable Apache Required Modules
-RUN a2enmod rewrite authz_core headers
-
 # Install Selfoss
 
 RUN if [ "${CHANNEL}" != "STABLE" ]; \
@@ -28,6 +28,7 @@ RUN if [ "${CHANNEL}" != "STABLE" ]; \
 	&& CHECKSUM=$(sha256sum /tmp/selfoss-$VERSION.zip | awk '{print $1}') \
 	&& if [ "${CHECKSUM}" != "${SHA256_HASH}" ]; then echo "Warning! Checksum does not match!" && exit 1; fi \
 	&& unzip -q /tmp/selfoss-$VERSION.zip -d /var/www/html && chown -R www-data:www-data /var/www/html/ \
+	&& if [ "${CHANNEL}" != "STABLE" ]; then shopt -s dotglob && mv /var/www/html/selfoss/* /var/www/html/ && rmdir /var/www/html/selfoss; fi \
 	&& sed -i -e 's/base_url=/base_url=\//g' /var/www/html/defaults.ini \
 	&& rm -rf /tmp/*
 
